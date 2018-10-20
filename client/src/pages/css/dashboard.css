@@ -1,0 +1,17 @@
+#logout {
+  text-align: right;
+}
+.container {
+  margin: 0;
+  padding: 0;
+}
+.container-fluid {
+  margin: 0;
+  padding: 0;
+}
+#sidebar {
+  width: 20vw;
+}
+.sidebar-tab {
+  border-radius: 0 !important;
+}

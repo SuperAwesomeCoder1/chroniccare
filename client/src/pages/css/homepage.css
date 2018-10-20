@@ -5,7 +5,6 @@
   background-size: cover;
   color: white;
   min-height: 100vh;
-  padding: 0;
   text-align: center;
   display: flex;
   align-items: center;
@@ -13,13 +12,6 @@
 #sign-up {
   text-align: center;
   padding-bottom: 3vh;
-}
-#footer {
-  height: 10vh;
-  color: white;
-}
-#footer-text {
-  padding-top: 2.5vh;
 }
 .hr-text {
   line-height: 1em;
@@ -51,4 +43,7 @@
   line-height: 1.5em;
   color: #818078;
   background-color: #fcfcfa;
+}
+a:hover {
+  text-decoration: none !important;
 }
