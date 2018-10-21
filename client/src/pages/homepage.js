@@ -1,59 +1,61 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import "./css/homepage.css";
 import { db, auth, provider } from "../firebase/firebase";
+import { connect } from "react-redux";
+import { changeUID, changeRole } from "../actions/actions";
 
 class Homepage extends Component {
-  constructor() {
-    super();
-    this.state = {
-      currentItem: "",
-      username: "",
-      items: [],
-      user: null,
-      redirect: false,
-      redirectLoc: ""
-    };
+  constructor(props) {
+    super(props);
     this.login = this.login.bind(this);
+    this.onChangeUID = this.onChangeUID.bind(this);
+    this.onChangeRole = this.onChangeRole.bind(this);
+  }
+  onChangeUID(uid) {
+    this.props.onChangeUID(uid);
+  }
+
+  onChangeRole(role) {
+    this.props.onChangeRole(role);
   }
   login() {
-    auth.signInWithPopup(provider).then(result => {
+    auth.signInWithPopup(provider).then(async result => {
       const user = result.user;
-      sessionStorage.setItem("user", JSON.stringify(user));
-      this.setState({
-        user
-      });
+      this.onChangeUID(user.uid);
       var patientRef = db.collection("patients").doc(user.uid);
-      patientRef
+      var patient = false;
+      await patientRef
         .get()
         .then(pat => {
           if (pat.exists) {
-            this.setState({ redirect: true, redirectLoc: "/dashboard" });
+            patient = true;
+            this.onChangeRole("patient");
+            this.props.history.push("/dashboard");
           }
         })
         .catch(err => {
           console.log("Error getting document", err);
         });
-      var doctorRef = db.collection("doctors").doc(user.uid);
-      doctorRef
-        .get()
-        .then(doc => {
-          if (!doc.exists) {
-            this.setState({ redirect: true, redirectLoc: "/createPerson" });
-          } else {
-            this.setState({ redirect: true, redirectLoc: "/dashboard" });
-          }
-        })
-        .catch(err => {
-          console.log("Error getting user info", err);
-        });
+      if (patient === false) {
+        var doctorRef = db.collection("doctors").doc(user.uid);
+        doctorRef
+          .get()
+          .then(doc => {
+            if (!doc.exists) {
+              this.props.history.push("/createPerson");
+            } else {
+              this.onChangeRole("doctor");
+              this.props.history.push("/dashboard");
+            }
+          })
+          .catch(err => {
+            console.log("Error getting user info", err);
+          });
+      }
     });
   }
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirectLoc} />;
-    }
     return (
       <div>
         <div className="jumbotron h-100 vertical-center" id="title">
@@ -84,4 +86,15 @@ class Homepage extends Component {
     );
   }
 }
-export default Homepage;
+const mapStateToProps = state => {
+  return state;
+};
+const mapActionsToProps = {
+  onChangeUID: changeUID,
+  onChangeRole: changeRole
+};
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(Homepage);

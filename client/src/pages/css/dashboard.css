@@ -15,3 +15,7 @@
 .sidebar-tab {
   border-radius: 0 !important;
 }
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}

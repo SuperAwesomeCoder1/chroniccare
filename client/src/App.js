@@ -5,6 +5,7 @@ import Homepage from "./pages/homepage";
 import Dashboard from "./pages/dashboard";
 import CreatePerson from "./pages/create-person";
 import Footer from "./pages/footer";
+import SendMessage from "./pages/subpages/send-message";
 
 class App extends React.Component {
   render() {
@@ -17,25 +18,12 @@ class App extends React.Component {
   }
 }
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      fakeAuth.isAuthenticated === true ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/login" />
-      )
-    }
-  />
-);
-
 const Main = () => (
   <Switch>
     <Route exact path="/" component={Homepage} />
-    <PrivateRoute path="/dashboard" component={Dashboard} />
-    <Route exact path="/createPerson" component={CreatePerson} />
+    <Route path="/dashboard" component={Dashboard} />
+    <Route path="/createPerson" component={CreatePerson} />
+    <Route path="/test" component={SendMessage} />
   </Switch>
 );
-
 export default App;

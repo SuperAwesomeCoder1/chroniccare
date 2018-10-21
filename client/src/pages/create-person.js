@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
 class CreatePerson extends Component {
   constructor() {
     super();
@@ -24,22 +26,22 @@ class CreatePerson extends Component {
       role: this.state.role
     };
     console.log("React user", user);
-    const userInfo = JSON.parse(sessionStorage.getItem("user"));
+    const userInfo = { uid: this.props.profile.uid };
     axios
       .post(`/createPerson`, { user: user, userInfo: userInfo })
       .then(res => {
-        console.log(res);
         console.log(res.data);
+        this.props.history.push("/dashboard");
       });
   }
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
-  componentDidMount() {
-    console.log(JSON.parse(sessionStorage.getItem("user")));
-  }
   render() {
+    if (!this.props.profile.uid) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
         <div className="container-fluid p-5">
@@ -108,4 +110,12 @@ class CreatePerson extends Component {
   }
 }
 
-export default CreatePerson;
+const mapStateToProps = state => {
+  return state;
+};
+const mapActionsToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(CreatePerson);
